@@ -28,7 +28,7 @@ func deployEshopFrontend(w http.ResponseWriter) {
 		return
 	}
 
-	err = exec.Command("docker", "run", "-d", "--name", "eshop-frontend", "--rm", "stevekaufman/eshop-frontend").Run()
+	err = exec.Command("docker", "run", "-d", "--rm", "--name", "eshop-frontend", "-p", "8085:8080", "stevekaufman/eshop-frontend").Run()
 	if err != nil {
 		sendError(w, err.Error())
 	}
