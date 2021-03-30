@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	http.ListenAndServe(":8080", http.HandlerFunc(handler))
+  log.Fatal(http.ListenAndServe(":5500", http.HandlerFunc(handler)))
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +33,7 @@ func deployEshopFrontend(w http.ResponseWriter) {
 	fmt.Println("Stopping old container")
 	err = exec.Command("docker", "stop", "eshop-frontend").Run()
 	if err != nil {
-		return
+		fmt.Println("No container already running")
 	}
 	fmt.Println("Stopped old container")
 
