@@ -20,6 +20,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	case "/website":
 		deployDockerImage(w, "stevekaufman/website", 5000)
 	default:
+		fmt.Println("--- Nothing to deploy ---")
 		w.WriteHeader(404)
 		fmt.Fprintf(w, "Nothing to deploy at '%s'", r.URL.Path)
 	}
