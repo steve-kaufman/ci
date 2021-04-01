@@ -33,6 +33,7 @@ func deployDockerImage(w http.ResponseWriter, imageName string, port int) {
 	err := exec.Command("docker", "pull", imageName).Run()
 	if err != nil {
 		sendError(w, fmt.Sprintf("Failed to deploy '%s'", imageName))
+		return
 	}
 	fmt.Println("Pulled new image")
 
@@ -64,6 +65,7 @@ func deployDockerImage(w http.ResponseWriter, imageName string, port int) {
 }
 
 func sendError(w http.ResponseWriter, msg string) {
+	fmt.Println(msg)
 	w.WriteHeader(400)
 	fmt.Fprint(w, msg)
 }
