@@ -29,13 +29,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 	if err != nil {
 		sendError(w, err.Error())
+		return
 	}
 
 	fmt.Fprint(w, "Deployed successfully!")
 }
 
 func deployDockerImage(name string, imageName string, port int) error {
-	fmt.Printf("Deploying '%s'", imageName)
+	fmt.Println("Deploying:", imageName)
 
 	fmt.Println("Pulling new image")
 	err := exec.Command("docker", "pull", imageName).Run()
