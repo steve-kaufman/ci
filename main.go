@@ -58,6 +58,7 @@ func deployDockerImage(w http.ResponseWriter, imageName string, port int) {
 	err = exec.Command("docker", "run", "-d", "--rm", "--name", imageName, "-p", portMap, imageName).Run()
 	if err != nil {
 		sendError(w, err.Error())
+		return
 	}
 	fmt.Println("Started new container")
 
