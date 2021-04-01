@@ -14,26 +14,33 @@ func main() {
 func handler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Received a request to deploy '%s'", r.URL.Path)
 
+	var err error
+
 	switch r.URL.Path {
 	case "/eshop-frontend":
-		deployDockerImage(w, "stevekaufman/eshop-frontend", 8085)
+		err = deployDockerImage("eshop-frontend", "stevekaufman/eshop-frontend", 8085)
 	case "/website":
-		deployDockerImage(w, "stevekaufman/website", 5000)
+		err = deployDockerImage("website", "stevekaufman/website", 5000)
 	default:
 		fmt.Println("--- Nothing to deploy ---")
 		w.WriteHeader(404)
 		fmt.Fprintf(w, "Nothing to deploy at '%s'", r.URL.Path)
+		return
 	}
+	if err != nil {
+		sendError(w, err.Error())
+	}
+
+	fmt.Fprint(w, "Deployed successfully!")
 }
 
-func deployDockerImage(w http.ResponseWriter, imageName string, port int) {
+func deployDockerImage(name string, imageName string, port int) error {
 	fmt.Printf("Deploying '%s'", imageName)
 
 	fmt.Println("Pulling new image")
 	err := exec.Command("docker", "pull", imageName).Run()
 	if err != nil {
-		sendError(w, fmt.Sprintf("Failed to deploy '%s'", imageName))
-		return
+		return fmt.Errorf("couldn't pull '%s'", imageName)
 	}
 	fmt.Println("Pulled new image")
 
@@ -55,22 +62,17 @@ func deployDockerImage(w http.ResponseWriter, imageName string, port int) {
 	portMap := fmt.Sprintf("%d:8080", port)
 
 	fmt.Println("Starting new container")
-	err = exec.Command("docker", "run", "-d", "--rm", "--name", imageName, "-p", portMap, imageName).Run()
+	err = exec.Command("docker", "run", "-d", "--rm", "--name", name, "-p", portMap, imageName).Run()
 	if err != nil {
-		sendError(w, err.Error())
-		return
+		return err
 	}
 	fmt.Println("Started new container")
 
-	sendSuccess(w, fmt.Sprintf("Deployed '%s'", imageName))
+	return nil
 }
 
 func sendError(w http.ResponseWriter, msg string) {
 	fmt.Println(msg)
-	w.WriteHeader(400)
-	fmt.Fprint(w, msg)
-}
-
-func sendSuccess(w http.ResponseWriter, msg string) {
+	w.WriteHeader(500)
 	fmt.Fprint(w, msg)
 }
