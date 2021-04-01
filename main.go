@@ -46,14 +46,14 @@ func deployDockerImage(name string, imageName string, port int) error {
 	fmt.Println("Pulled new image")
 
 	fmt.Println("Stopping old container")
-	err = exec.Command("docker", "stop", imageName).Run()
+	err = exec.Command("docker", "stop", name).Run()
 	if err != nil {
 		fmt.Println("No container already running")
 	}
 	fmt.Println("Stopped old container")
 
 	fmt.Println("Removing old container just in case")
-	err = exec.Command("docker", "rm", imageName).Run()
+	err = exec.Command("docker", "rm", name).Run()
 	if err != nil {
 		fmt.Println("Container did not need removing")
 	} else {
