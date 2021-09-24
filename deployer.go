@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -38,10 +40,7 @@ func (d DockerDeployer) pullImage(imageName string) error {
 	if err != nil {
 		return err
 	}
-	err = rc.Close()
-	if err != nil {
-		return err
-	}
+	io.Copy(&bytes.Buffer{}, rc)
 	fmt.Println("Pulled new image")
 	return nil
 }
